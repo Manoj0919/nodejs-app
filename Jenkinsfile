@@ -5,32 +5,31 @@ pipeline {
         disableConcurrentBuilds()
         timeout(time: 30, unit: 'MINUTES')
     }
-    tools {
-     nodejs 'NodeJS'
-    }
 	
     triggers {
         githubPush()
     }
     environment {
         user ="ec2-user"
-        HOST_NAME="52.73.202.229" 
+        HOST-NAME="54.174.158.42" 
         sshcredentials = "ssh-ngnix"
-        nodes_installion_folder ="/home/ec2-user/nodejs"
+        nodes-installion-folder ="/home/ec2-user/nodejs"
+    }
+    tools {
+        nodejs 'NodeJS'
     }
     stages {
         stage("Install npm"){
             steps{
-                sh "npm int -y "
+                sh "npm install"
             }
-        } 
+        }
         stage("install dependences"){
             steps{
                 sshagent([env.sshcredentials]) {
                     sh"""
-                        ssh -o StrictHostKeyChecking=no ${user}@${HOST_NAME} "mkdir /home/ec2-user/nodejs " || true
-                        rsync -avz --exclude=node_modules --exclude=.git ./ ${user}@${HOST_NAME}:${nodes_installion_folder}/
-
+                        ssh -o StrictHostKeyChecking=no ${user}@${RHOST-NAME} "mkdir /home/ec2-user/nodejs " || true
+                        rsync -avz --exclude=node_modules --exclude=.git ./ ${user}@${RHOST-NAME}:${nodes-installion-folder}/
                     """           
                 }   
 
@@ -40,11 +39,10 @@ pipeline {
             steps{
                 sshagent([env.sshcredentials]) {
                     sh"""
-                        ssh -o StrictHostKeyChecking=no ${user}@${HOST_NAME}  " cd ${nodes_installion_folder} &&
+                        ssh -o StrictHostKeyChecking=no ${user}@${RHOST-NAME}  cd ${nodes-installion-folder} &&
                        
                         npm install &&
-                        npx pm2 start app.js --name my-app --update-env || npx pm2 restart my-app 
-                        "
+                        npx pm2 start app.js --name my-app --update-env || npx pm2 restart my-app
                     """           
             }   
 
