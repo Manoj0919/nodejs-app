@@ -13,14 +13,14 @@ pipeline {
     }
 
     tools {
-        nodejs 'Node-20.19.5' // Ensure this matches the name of the NodeJS installation in Jenkins
+        nodejs 'NodeJS' // Ensure this matches the name of the NodeJS installation in Jenkins
     }
 
     environment {
-        REMOTE_HOST = '172.31.31.169' // Replace with your server's IP or hostname
+        REMOTE_HOST = '54.174.158.42' // Replace with your server's IP or hostname
         REMOTE_USER = 'ec2-user'
         REMOTE_PATH = '/home/ec2-user/nodejs-app'
-        SSH_CREDENTIALS = 'NodeServerSSHKey'
+        SSH_CREDENTIALS = 'ssh-ngnix'
     }
 
     stages {
@@ -66,7 +66,7 @@ pipeline {
 
     post {
         always {
-            sendEmail(currentBuild.currentResult,"balajireddy.urs@gmail.com")
+            sendEmail(currentBuild.currentResult,"")
             cleanWs()
         }    
     }
