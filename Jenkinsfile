@@ -28,8 +28,8 @@ pipeline {
             steps{
                 sshagent([env.sshcredentials]) {
                     sh"""
-                        ssh -o StrictHostKeyChecking=no ${user}@${RHOST-NAME} "mkdir /home/ec2-user/nodejs " || true
-                        rsync -avz --exclude=node_modules --exclude=.git ./ ${user}@${RHOST-NAME}:${nodes-installion-folder}/
+                        ssh -o StrictHostKeyChecking=no ${user}@${HOST-NAME} "mkdir /home/ec2-user/nodejs " || true
+                        rsync -avz --exclude=node_modules --exclude=.git ./ ${user}@${HOST-NAME}:${nodes-installion-folder}/
                     """           
                 }   
 
@@ -39,7 +39,7 @@ pipeline {
             steps{
                 sshagent([env.sshcredentials]) {
                     sh"""
-                        ssh -o StrictHostKeyChecking=no ${user}@${RHOST-NAME}  cd ${nodes-installion-folder} &&
+                        ssh -o StrictHostKeyChecking=no ${user}@${HOST-NAME}  cd ${nodes-installion-folder} &&
                        
                         npm install &&
                         npx pm2 start app.js --name my-app --update-env || npx pm2 restart my-app
